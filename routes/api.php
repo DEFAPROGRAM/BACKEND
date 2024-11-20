@@ -6,6 +6,7 @@ use App\Http\Controllers\SedesController;
 use App\Http\Controllers\JuzgadosController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\ReservasController;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,4 @@ Route::apiResource('sedes', SedesController::class);
 Route::apiResource('juzgados', JuzgadosController::class);
 Route::apiResource('salas', SalasController::class);
 Route::apiResource('reservas', ReservasController::class);
+Route::apiResource('users', UsersController::class);
