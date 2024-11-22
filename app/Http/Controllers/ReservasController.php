@@ -31,12 +31,11 @@ class ReservasController extends Controller
             'id_usuario' => 'required|exists:users,id',
             'descripcion' => 'nullable|string',
             'fecha' => 'required|date',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:pendiente,confirmada,cancelada',
         ]);
 
+        
         // Creación de la reserva y retorno del objeto creado
         $reserva = Reservas::create($request->all());
 
