@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservas;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ReservasController extends Controller
 {
@@ -30,14 +31,21 @@ class ReservasController extends Controller
             'id_juzgado' => 'required|exists:juzgados,id_juzgado',
             'id_usuario' => 'required|exists:users,id',
             'descripcion' => 'nullable|string',
-            'fecha' => 'required|date',
+            'fecha' => 'required|date_format:d-m-Y',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
             'observaciones' => 'nullable|string',
             'estado' => 'required|in:pendiente,confirmada,cancelada',
         ]);
 
+        // Convertir la fecha al formato Y-m-d para almacenar en la base de datos
+        $fecha = Carbon::createFromFormat('d-m-Y', $request->fecha)->format('Y-m-d');
         
-        // Creación de la reserva y retorno del objeto creado
-        $reserva = Reservas::create($request->all());
+        // Crear la reserva con la fecha convertida
+        $reserva = Reservas::create(array_merge(
+            $request->except('fecha'),
+            ['fecha' => $fecha]
+        ));
 
         // Mensaje de éxito
         return response()->json(['message' => 'Reserva creada con éxito', 'data' => $reserva], 201);
@@ -55,12 +63,18 @@ class ReservasController extends Controller
             'id_juzgado' => 'sometimes|required|exists:juzgados,id_juzgado',
             'id_usuario' => 'sometimes|required|exists:users,id',
             'descripcion' => 'nullable|string',
-            'fecha' => 'sometimes|required|date',
+            'fecha' => 'sometimes|required|date_format:d-m-Y',
             'hora_inicio' => 'sometimes|required|date_format:H:i',
             'hora_fin' => 'sometimes|required|date_format:H:i|after:hora_inicio',
             'observaciones' => 'nullable|string',
             'estado' => 'sometimes|required|in:pendiente,confirmada,cancelada',
         ]);
+
+        // Si se proporciona una nueva fecha, convertirla al formato Y-m-d
+        if ($request->has('fecha')) {
+            $fecha = Carbon::createFromFormat('d-m-Y', $request->fecha)->format('Y-m-d');
+            $request->merge(['fecha' => $fecha]);
+        }
 
         // Actualización de la reserva
         $reserva->update($request->all());
@@ -82,3 +96,4 @@ class ReservasController extends Controller
         return response()->json(['message' => 'Reserva eliminada con éxito']);
     }
 }
+
