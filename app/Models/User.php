@@ -11,9 +11,9 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'users'; // Asegúrate de que esto coincida con el nombre de tu tabla en la base de datos
+    protected $table = 'users'; 
 
-    protected $primaryKey = 'id'; // Asegúrate de que esto coincida con el nombre de la clave primaria en tu tabla
+    protected $primaryKey = 'id'; 
 
     protected $fillable = [
         'nombres',
