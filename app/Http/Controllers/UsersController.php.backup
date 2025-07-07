@@ -9,25 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class UsersController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $user = $request->user();
-        \Log::info('UsersController - Usuario autenticado:', [
-            'id' => $user ? $user->id : 'null',
-            'rol' => $user ? $user->rol : 'null',
-            'email' => $user ? $user->email : 'null'
-        ]);
-        
-        if ($user->rol === 'usuario') {
-            // Usuario normal: solo ve su propio nombre
-            $users = User::where('id', $user->id)->get();
-            \Log::info('UsersController - Usuario normal, usuarios encontrados:', ['count' => $users->count()]);
-        } else {
-            // Admin: ve todos los usuarios
-            $users = User::all();
-            \Log::info('UsersController - Admin, todos los usuarios:', ['count' => $users->count()]);
-        }
-        
+        $users = User::all();
         return response()->json(['message' => 'Usuarios obtenidos con éxito', 'data' => $users]);
     }
 
@@ -49,14 +33,8 @@ class UsersController extends Controller
             'id_juzgado' => 'required|exists:juzgados,id_juzgado',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'rol' => 'sometimes|string|in:admin,usuario',
+            'rol' => 'required|string|in:admin,usuario',
         ]);
-
-        // Asignar rol "usuario" por defecto si no se proporciona
-        $rol = $request->input('rol', 'usuario');
-        
-        // Log para debugging
-        Log::info('Rol asignado:', ['rol' => $rol, 'proporcionado' => $request->has('rol')]);
 
         try {
             $user = User::create([

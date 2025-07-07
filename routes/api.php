@@ -9,6 +9,9 @@ use App\Http\Controllers\ReservasController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\SliderController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ConfiguracionController;
 
 
 /*
@@ -35,24 +38,52 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
 });
 
-// Rutas de recursos API
+// Rutas de recursos API (públicas)
 Route::apiResource('sedes', SedesController::class);
 Route::apiResource('juzgados', JuzgadosController::class);
 Route::apiResource('salas', SalasController::class);
-Route::apiResource('reservas', ReservasController::class);
-Route::apiResource('users', UsersController::class);
 
-// Rutas de reportes
-Route::get('/reportes/listados', [ReportesController::class, 'getListados']);
-Route::get('/reportes/reservas-por-fecha', [ReportesController::class, 'getReservasPorFecha']);
-Route::get('/reportes/reservas-por-usuario', [ReportesController::class, 'getReservasPorUsuario']);
-Route::get('/reportes/reservas-por-estado', [ReportesController::class, 'getReservasPorEstado']);
-Route::get('/reportes/salas-mas-solicitadas', [ReportesController::class, 'getSalasMasSolicitadas']);
-Route::get('/reportes/estadisticas-generales', [ReportesController::class, 'getEstadisticasGenerales']);
+// Rutas protegidas que requieren autenticación
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('reservas', ReservasController::class);
+    Route::apiResource('users', UsersController::class);
+});
 
-// Rutas de exportación
-Route::post('/reportes/export/excel', [ReportesController::class, 'exportarExcel']);
-Route::post('/reportes/export/pdf', [ReportesController::class, 'exportarPdf']);
+// Rutas de reportes (protegidas)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/reportes/listados', [ReportesController::class, 'getListados']);
+    Route::get('/reportes/reservas-por-fecha', [ReportesController::class, 'getReservasPorFecha']);
+    Route::get('/reportes/reservas-por-usuario', [ReportesController::class, 'getReservasPorUsuario']);
+    Route::get('/reportes/reservas-por-estado', [ReportesController::class, 'getReservasPorEstado']);
+    Route::get('/reportes/salas-mas-solicitadas', [ReportesController::class, 'getSalasMasSolicitadas']);
+    Route::get('/reportes/estadisticas-generales', [ReportesController::class, 'getEstadisticasGenerales']);
+
+    // Rutas de exportación
+    Route::post('/reportes/export/excel', [ReportesController::class, 'exportarExcel']);
+    Route::post('/reportes/export/pdf', [ReportesController::class, 'exportarPdf']);
+});
+
+// Rutas públicas para consulta
+Route::get('/slider', [SliderController::class, 'index']);
+Route::get('/news', [NewsController::class, 'index']);
+
+// Rutas protegidas para administración (solo admin)
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Slider admin
+    Route::get('/slider/admin', [SliderController::class, 'adminIndex']);
+    Route::post('/slider/admin', [SliderController::class, 'store']);
+    Route::put('/slider/admin/{id}', [SliderController::class, 'update']);
+    Route::delete('/slider/admin/{id}', [SliderController::class, 'destroy']);
+
+    // News admin
+    Route::get('/news/admin', [NewsController::class, 'adminIndex']);
+    Route::post('/news/admin', [NewsController::class, 'store']);
+    Route::put('/news/admin/{id}', [NewsController::class, 'update']);
+    Route::delete('/news/admin/{id}', [NewsController::class, 'destroy']);
+
+    // Configuración web
+    Route::post('/configuracion', [ConfiguracionController::class, 'store']);
+});
 
 
 
