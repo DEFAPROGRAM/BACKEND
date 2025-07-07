@@ -16,14 +16,14 @@ class SedeJuzgadoSeeder extends Seeder
     {
         // Crear sede temporal
         $sede = Sedes::create([
-            'nom_sede' => 'Sede Principal',
-            'direccion' => 'Dirección Temporal',
-            'municipio' => 'Municipio Temporal',
+            'nom_sede' => 'Cuartel del fijo',
+            'direccion' => 'Calle del Cuartel, cra 5 # 36-29',
+            'municipio' => 'Cartagena',
         ]);
 
         // Crear juzgado temporal
         Juzgados::create([
-            'nom_juzgado' => 'Juzgado Temporal',
+            'nom_juzgado' => 'Area de Sistemas',
             'id_sede' => $sede->id_sede,
         ]);
 
