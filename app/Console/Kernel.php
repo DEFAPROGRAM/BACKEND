@@ -8,6 +8,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
+     * The application's global command schedule.
+     *
+     * @var array
+     */
+    protected $commands = [
+        \App\Console\Commands\InsertDemoNewsSlider::class,
+    ];
+
+    /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void

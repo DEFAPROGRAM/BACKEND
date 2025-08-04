@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\NewsSliderSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,7 +24,7 @@ class DatabaseSeeder extends Seeder
             SedeJuzgadoSeeder::class,
             UserSeeder::class,
             SliderImageSeeder::class,
-            NewsSeeder::class,
+            NewsSliderSeeder::class,
         ]);
     }
 }

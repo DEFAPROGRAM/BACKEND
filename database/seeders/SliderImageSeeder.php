@@ -16,7 +16,8 @@ class SliderImageSeeder extends Seeder
         SliderImage::create([
             'title' => 'Imagen 1',
             'description' => 'Imagen institucional de bienvenida',
-            'image_path' => 'slider/1.jpg',
+            'image_path' => 'http://127.0.0.1:8000/storage/slider/1.jpg',
+            'caracteristicas' => 'Proyector de Video, Sistema de Audio, Aire Acondicionado',
             'order' => 1,
             'active' => true
         ]);
@@ -24,7 +25,8 @@ class SliderImageSeeder extends Seeder
         SliderImage::create([
             'title' => 'Imagen 2',
             'description' => 'Imagen institucional secundaria',
-            'image_path' => 'slider/2.png',
+            'image_path' => 'http://127.0.0.1:8000/storage/slider/2.png',
+            'caracteristicas' => 'Proyector de Video, Sistema de Audio, Aire Acondicionado',
             'order' => 2,
             'active' => true
         ]);
@@ -32,7 +34,8 @@ class SliderImageSeeder extends Seeder
         SliderImage::create([
             'title' => 'Imagen 3',
             'description' => 'Imagen institucional adicional',
-            'image_path' => 'slider/3.jpg',
+            'image_path' => 'http://127.0.0.1:8000/storage/slider/3.jpg',
+            'caracteristicas' => 'Proyector de Video, Sistema de Audio, Aire Acondicionado',
             'order' => 3,
             'active' => true
         ]);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('image_path');
+            $table->text('caracteristicas')->nullable(); // Nuevo campo para características
             $table->integer('order')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();

@@ -10,7 +10,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\SliderController;
-use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsSliderController;
 use App\Http\Controllers\ConfiguracionController;
 
 
@@ -65,7 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Rutas públicas para consulta
 Route::get('/slider', [SliderController::class, 'index']);
-Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news_sliders', [NewsSliderController::class, 'index']);
 
 // Rutas protegidas para administración (solo admin)
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
@@ -75,11 +75,11 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/slider/admin/{id}', [SliderController::class, 'update']);
     Route::delete('/slider/admin/{id}', [SliderController::class, 'destroy']);
 
-    // News admin
-    Route::get('/news/admin', [NewsController::class, 'adminIndex']);
-    Route::post('/news/admin', [NewsController::class, 'store']);
-    Route::put('/news/admin/{id}', [NewsController::class, 'update']);
-    Route::delete('/news/admin/{id}', [NewsController::class, 'destroy']);
+    // NewsSlider admin
+    Route::get('/news_sliders/admin', [NewsSliderController::class, 'adminIndex']);
+    Route::post('/news_sliders/admin', [NewsSliderController::class, 'store']);
+    Route::put('/news_sliders/admin/{id}', [NewsSliderController::class, 'update']);
+    Route::delete('/news_sliders/admin/{id}', [NewsSliderController::class, 'destroy']);
 
     // Configuración web
     Route::post('/configuracion', [ConfiguracionController::class, 'store']);

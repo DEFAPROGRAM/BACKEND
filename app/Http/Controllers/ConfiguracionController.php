@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\News;
+use App\Models\SliderImage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ConfiguracionController extends Controller
 {
@@ -22,51 +24,64 @@ class ConfiguracionController extends Controller
         try {
             \Log::info('Configuración: Procesando imágenes del slider', ['count' => count($data['sliderImages'])]);
             
-            // Guardar imágenes del slider usando consulta directa
+            // Procesar imágenes del slider (solo actualizar datos, no subir archivos)
             foreach ($data['sliderImages'] as $img) {
                 \Log::info('Configuración: Procesando imagen', $img);
                 
                 $sliderData = [
                     'title' => $img['title'] ?? '',
                     'description' => $img['description'] ?? '',
-                    'image_path' => $img['url'] ?? $img['image_path'] ?? '',
+                    'caracteristicas' => $img['caracteristicas'] ?? '',
                     'order' => $img['order'] ?? 0,
                     'active' => $img['active'] ?? true,
                 ];
                 
-                \Log::info('Configuración: Datos de imagen a guardar', $sliderData);
-                
-                if (!empty($img['id'])) {
-                    $updated = DB::table('slider_images')->where('id', $img['id'])->update($sliderData);
-                    \Log::info('Configuración: Imagen actualizada', ['id' => $img['id'], 'updated' => $updated]);
+                // Solo actualizar si la imagen ya existe en la BD
+                if (!empty($img['id']) && !str_starts_with($img['id'], 'temp_')) {
+                    SliderImage::updateOrCreate(['id' => $img['id']], $sliderData);
+                    \Log::info('Configuración: Imagen actualizada', ['id' => $img['id']]);
                 } else {
-                    $created = DB::table('slider_images')->insertGetId($sliderData);
-                    \Log::info('Configuración: Imagen creada', ['id' => $created]);
+                    \Log::info('Configuración: Imagen nueva ya fue subida, saltando procesamiento');
                 }
             }
 
             \Log::info('Configuración: Procesando noticias', ['count' => count($data['newsList'])]);
             
-            // Guardar noticias
+            // Procesar noticias (solo actualizar datos, no crear nuevas)
             foreach ($data['newsList'] as $news) {
                 \Log::info('Configuración: Procesando noticia', $news);
                 
                 $newsData = [
                     'title' => $news['title'] ?? '',
                     'content' => $news['content'] ?? '',
-                    'image_path' => $news['image_path'] ?? '',
-                    'published_at' => $news['publish_date'] ?? $news['published_at'] ?? now(),
+                    'published_at' => $news['published_at'] ?? now(),
                     'active' => $news['active'] ?? true,
                 ];
                 
-                \Log::info('Configuración: Datos de noticia a guardar', $newsData);
-                
-                if (!empty($news['id'])) {
-                    $updated = News::updateOrCreate(['id' => $news['id']], $newsData);
-                    \Log::info('Configuración: Noticia actualizada', ['id' => $updated->id]);
+                // Solo actualizar si la noticia ya existe en la BD
+                if (!empty($news['id']) && !str_starts_with($news['id'], 'temp_')) {
+                    // Verificar si hay cambios en la imagen
+                    if (isset($news['image_path'])) {
+                        // Si image_path es null, eliminar la imagen
+                        if ($news['image_path'] === null) {
+                            $existingNews = News::find($news['id']);
+                            if ($existingNews && $existingNews->image_path && Storage::disk('public')->exists($existingNews->image_path)) {
+                                Storage::disk('public')->delete($existingNews->image_path);
+                            }
+                            $newsData['image_path'] = null;
+                        } else {
+                            $newsData['image_path'] = $news['image_path'];
+                        }
+                        \Log::info('Configuración: Actualizando image_path de noticia', [
+                            'id' => $news['id'],
+                            'image_path' => $news['image_path']
+                        ]);
+                    }
+                    
+                    News::updateOrCreate(['id' => $news['id']], $newsData);
+                    \Log::info('Configuración: Noticia actualizada', ['id' => $news['id']]);
                 } else {
-                    $created = News::create($newsData);
-                    \Log::info('Configuración: Noticia creada', ['id' => $created->id]);
+                    \Log::info('Configuración: Noticia nueva ya fue creada, saltando procesamiento');
                 }
             }
 

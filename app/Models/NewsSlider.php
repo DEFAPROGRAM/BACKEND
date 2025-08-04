@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class News extends Model
+class NewsSlider extends Model
 {
     use HasFactory;
 
@@ -13,12 +13,11 @@ class News extends Model
         'title',
         'content',
         'image_path',
-        'published_at',
-        'active'
+        'order',
+        'active',
     ];
 
     protected $casts = [
         'active' => 'boolean',
-        'published_at' => 'datetime',
     ];
-}
+} 
